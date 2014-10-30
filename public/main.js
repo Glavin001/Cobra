@@ -19,18 +19,29 @@ $(document).ready(function() {
     };
     window.createData = createData;
 
-    window.test = function(n, start, end) {
+    var testSensor = window.testSensor = function(date,n ) {
+        for (var v=0;v<n;v++) {
+            var value = 1000 * Math.random();
+            createData('testData','plant',"sensor "+v, date, value);
+        }
+    }
+
+    var bulkTest = window.bulkTest = function(n, start, end) {
         start = +(new Date(start));
         end = +(new Date(end));
         var delta = Math.ceil((end - start)/1000);
         for (var i=0;i<delta;i++) {
             var date = new Date(start+i*1000);
-            for (var v=0;v<n;v++) {
-                var value = 1000 * Math.random();
-                createData('testData','plant',"sensor "+v, date, value);
-            }
+            testSensor(date, n);
         }
     }
+
+    var startRealtimeTest = window.startRealtimeTest = function(n) {
+        setInterval(function() {
+            testSensor(new Date(), n);
+        }, 1000);
+    }
+
 
     var aggregate = function(collection, pipeline, options, callback) {
         return $.get(
