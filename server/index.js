@@ -54,8 +54,8 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
         nconf.get('mongo:database')+"'.");
 
     // Add static files, if available.
-    app.use(express.static(__dirname+'/public'));
-    app.use(express.static(__dirname+'/bower_components'));
+    app.use(express.static(path.resolve(__dirname,'../public')));
+    app.use(express.static(path.resolve(__dirname,'../bower_components')));
 
     // Create REST API
     var queryToJson = function(query) {
@@ -86,6 +86,7 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
             var query = queryToJson(req.query);
             // Check if Body is available and has options
             var body = req.body;
+            console.log(query, body, req.query);
             if (Object.keys(body).length > 0) {
                 query = body;
             }
@@ -151,8 +152,17 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
         var value = query.value;
 
         // Check for all of the required params
-        if (!(source && type && date && value)) {
-            return callback({'err': 'Missing required param.'});
+        if (!source) {
+            return callback({'err': 'Missing required param: source'});
+        }
+        if (!type) {
+            return callback({'err': 'Missing required param: type'});
+        }
+        if (!date) {
+            return callback({'err': 'Missing required param: date'});
+        }
+        if (!value) {
+            return callback({'err': 'Missing required param: value'});
         }
 
         // Remember the position in the hour
@@ -160,9 +170,9 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
         var minute = date.getUTCMinutes();
         var milliseconds = date.getUTCMilliseconds();
         // Only show hours (no minutes / seconds / milliseconds)
-        date.setMinutes(0);
-        date.setSeconds(0);
-        date.setMilliseconds(0);
+        date.setUTCMinutes(0);
+        date.setUTCSeconds(0);
+        date.setUTCMilliseconds(0);
         // Create _id
         var _id = {
             source: source,

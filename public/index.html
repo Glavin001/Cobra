@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cobra</title>
+
+    <!-- Bootstrap -->
+    <link href="bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- NVD3 -->
+    <link href="nvd3/nv.d3.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Styles -->
+    <style>
+        #charts {
+            height: 100%;
+            overflow: visible;
+        }
+        #charts svg {
+            height: 500px;
+        }
+    </style>
+
+  </head>
+  <body>
+
+    <div class="container-fluid">
+
+        <div class="jumbotron">
+          <h1>Welcome to Cobra</h1>
+          <p>Time-Series Data + MongoDB + Node.js + Express + D3</p>
+          <p><a class="btn btn-primary btn-lg" role="button" href="https://github.com/Glavin001/MongoViewer" target="_blank">Learn more</a></p>
+        </div>
+
+        <div id="charts" class="">
+            <h3>Time Series - Line Chart Demo</h3>
+            <div class="row">
+                <svg id="discreteBarDemo-1" class="col-md-6"></svg>
+                <svg id="discreteBarDemo-2" class="col-md-6"></svg>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="jquery/dist/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <!-- Custom JavaScripts -->
+    <script src="d3/d3.min.js"></script>
+    <script src="nvd3/nv.d3.min.js"></script>
+    <script src="main.js"></script>
+
+  </body>
+</html>
