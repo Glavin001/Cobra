@@ -21,6 +21,7 @@
   ],
   "dependencies": {
     "bootstrap": "~3.1.1",
-    "nvd3": "~1.1.15-beta"
+    "nvd3": "~1.1.15-beta",
+    "cubism": "~1.6.0"
   }
 }

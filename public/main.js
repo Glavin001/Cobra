@@ -190,8 +190,8 @@ $(document).ready(function() {
     // Graph it!
     poll = function() {
             graphLineChart(
-            "#charts svg#discreteBarDemo-1",
-            "Cumulative Return",
+            "#charts svg#lineDemo-1",
+            "testData Line Chart",
             "testData",
             [],
             {},
@@ -236,377 +236,51 @@ $(document).ready(function() {
     }
     setInterval(poll, 1000);
 
-    //
-    // graphPieChart(
-    //     "#charts svg#discreteBarDemo-2",
-    //     "Cumulative Return",
-    //     "discreteBar",
-    //     [ { "$project": {"_id":0, "label": 1, "value": 1} } ],
-    //     {}
-    // );
-    //
-    // // Zips 1
-    // graphDiscreteBarChart(
-    //     "#charts svg#zips1-1",
-    //     "Zip Codes Example 1",
-    //     "zips",
-    //     [
-    //         { $group : { _id : "$state", totalPop : { $sum : "$pop" } } },
-    //         { $match : { totalPop : { $gte : 10*1000*1000 } } },
-    //         { $project: { _id : 0, label: "$_id", value: "$totalPop" } }
-    //     ],
-    //     {}
-    // );
-    // graphPieChart(
-    //     "#charts svg#zips1-2",
-    //     "Zip Codes Example 1",
-    //     "zips",
-    //     [
-    //         { $group : { _id : "$state", totalPop : { $sum : "$pop" } } },
-    //         { $match : { totalPop : { $gte : 10*1000*1000 } } },
-    //         { $project: { _id : 0, label: "$_id", value: "$totalPop" } }
-    //     ],
-    //     {}
-    // );
-    //
-    // // Zips 2
-    // graphDiscreteBarChart(
-    //     "#charts svg#zips2-1",
-    //     "Zip Codes Example 2",
-    //     "zips",
-    //     [
-    //         { $group :
-    //             {
-    //                 _id : { state : "$state", city : "$city" },
-    //                 pop : { $sum : "$pop" }
-    //             }
-    //         },
-    //         { $group :
-    //             {
-    //                 _id : "$_id.state",
-    //                 avgCityPop : { $avg : "$pop" }
-    //             }
-    //         },
-    //         {
-    //             $project: {
-    //                 _id : 0,
-    //                 label: "$_id",
-    //                 value: "$avgCityPop"
-    //             }
-    //         }
-    //     ],
-    //     {}
-    // );
-    // graphPieChart(
-    //     "#charts svg#zips2-2",
-    //     "Zip Codes Example 2",
-    //     "zips",
-    //     [
-    //         { $group :
-    //             {
-    //                 _id : { state : "$state", city : "$city" },
-    //                 pop : { $sum : "$pop" }
-    //             }
-    //         },
-    //         { $group :
-    //             {
-    //                 _id : "$_id.state",
-    //                 avgCityPop : { $avg : "$pop" }
-    //             }
-    //         },
-    //         {
-    //             $project: {
-    //                 _id : 0,
-    //                 label: "$_id",
-    //                 value: "$avgCityPop"
-    //             }
-    //         }
-    //     ],
-    //     {}
-    // );
-    //
-    // // Zips 3
-    // graphDiscreteBarChart(
-    //     "#charts svg#zips3-1",
-    //     "Zip Codes Example 3",
-    //     "zips",
-    //     [
-    //         {
-    //             $group: {
-    //                 _id: {
-    //                     state: "$state",
-    //                     city: "$city"
-    //                 },
-    //                 pop: {
-    //                     $sum: "$pop"
-    //                 }
-    //             }
-    //         }, {
-    //             $sort: {
-    //                 pop: 1
-    //             }
-    //         }, {
-    //             $group: {
-    //                 _id: "$_id.state",
-    //                 biggestCity: {
-    //                     $last: "$_id.city"
-    //                 },
-    //                 biggestPop: {
-    //                     $last: "$pop"
-    //                 },
-    //                 smallestCity: {
-    //                     $first: "$_id.city"
-    //                 },
-    //                 smallestPop: {
-    //                     $first: "$pop"
-    //                 }
-    //             }
-    //         },
-    //
-    //         // the following $project is optional, and
-    //         // modifies the output format.
-    //
-    //         {
-    //             $project: {
-    //                 _id: 0,
-    //                 state: "$_id",
-    //                 biggestCity: {
-    //                     name: "$biggestCity",
-    //                     pop: "$biggestPop"
-    //                 },
-    //                 smallestCity: {
-    //                     name: "$smallestCity",
-    //                     pop: "$smallestPop"
-    //                 }
-    //             }
-    //         },
-    //
-    //         { $project: { _id : 0, label: "$state", value: "$biggestCity.pop" } }
-    //     ],
-    //     {}
-    // );
-    // graphPieChart(
-    //     "#charts svg#zips3-2",
-    //     "Zip Codes Example 3",
-    //     "zips",
-    //     [
-    //         {
-    //             $group: {
-    //                 _id: {
-    //                     state: "$state",
-    //                     city: "$city"
-    //                 },
-    //                 pop: {
-    //                     $sum: "$pop"
-    //                 }
-    //             }
-    //         }, {
-    //             $sort: {
-    //                 pop: 1
-    //             }
-    //         }, {
-    //             $group: {
-    //                 _id: "$_id.state",
-    //                 biggestCity: {
-    //                     $last: "$_id.city"
-    //                 },
-    //                 biggestPop: {
-    //                     $last: "$pop"
-    //                 },
-    //                 smallestCity: {
-    //                     $first: "$_id.city"
-    //                 },
-    //                 smallestPop: {
-    //                     $first: "$pop"
-    //                 }
-    //             }
-    //         },
-    //
-    //         // the following $project is optional, and
-    //         // modifies the output format.
-    //
-    //         {
-    //             $project: {
-    //                 _id: 0,
-    //                 state: "$_id",
-    //                 biggestCity: {
-    //                     name: "$biggestCity",
-    //                     pop: "$biggestPop"
-    //                 },
-    //                 smallestCity: {
-    //                     name: "$smallestCity",
-    //                     pop: "$smallestPop"
-    //                 }
-    //             }
-    //         },
-    //
-    //         { $project: { _id : 0, label: "$state", value: "$biggestCity.pop" } }
-    //     ],
-    //     {}
-    // );
-    //
-    // // Zips 4
-    // graphDiscreteBarChart(
-    //     "#charts svg#zips4-1",
-    //     "Zip Codes Example 4",
-    //     "zips",
-    //     [
-    //         {
-    //             $group: {
-    //                 _id: {
-    //                     state: "$state",
-    //                     city: "$city"
-    //                 },
-    //                 pop: {
-    //                     $sum: "$pop"
-    //                 }
-    //             }
-    //         }, {
-    //             $sort: {
-    //                 pop: 1
-    //             }
-    //         }, {
-    //             $group: {
-    //                 _id: "$_id.state",
-    //                 biggestCity: {
-    //                     $last: "$_id.city"
-    //                 },
-    //                 biggestPop: {
-    //                     $last: "$pop"
-    //                 },
-    //                 smallestCity: {
-    //                     $first: "$_id.city"
-    //                 },
-    //                 smallestPop: {
-    //                     $first: "$pop"
-    //                 }
-    //             }
-    //         },
-    //
-    //         // the following $project is optional, and
-    //         // modifies the output format.
-    //
-    //         {
-    //             $project: {
-    //                 _id: 0,
-    //                 state: "$_id",
-    //                 biggestCity: {
-    //                     name: "$biggestCity",
-    //                     pop: "$biggestPop"
-    //                 },
-    //                 smallestCity: {
-    //                     name: "$smallestCity",
-    //                     pop: "$smallestPop"
-    //                 }
-    //             }
-    //         },
-    //
-    //         { $project: { _id : 0, label: "$state", value: "$smallestCity.pop" } }
-    //     ],
-    //     {}
-    // );
-    // graphPieChart(
-    //     "#charts svg#zips4-2",
-    //     "Zip Codes Example 4",
-    //     "zips",
-    //     [
-    //         {
-    //             $group: {
-    //                 _id: {
-    //                     state: "$state",
-    //                     city: "$city"
-    //                 },
-    //                 pop: {
-    //                     $sum: "$pop"
-    //                 }
-    //             }
-    //         }, {
-    //             $sort: {
-    //                 pop: 1
-    //             }
-    //         }, {
-    //             $group: {
-    //                 _id: "$_id.state",
-    //                 biggestCity: {
-    //                     $last: "$_id.city"
-    //                 },
-    //                 biggestPop: {
-    //                     $last: "$pop"
-    //                 },
-    //                 smallestCity: {
-    //                     $first: "$_id.city"
-    //                 },
-    //                 smallestPop: {
-    //                     $first: "$pop"
-    //                 }
-    //             }
-    //         },
-    //
-    //         // the following $project is optional, and
-    //         // modifies the output format.
-    //
-    //         {
-    //             $project: {
-    //                 _id: 0,
-    //                 state: "$_id",
-    //                 biggestCity: {
-    //                     name: "$biggestCity",
-    //                     pop: "$biggestPop"
-    //                 },
-    //                 smallestCity: {
-    //                     name: "$smallestCity",
-    //                     pop: "$smallestPop"
-    //                 }
-    //             }
-    //         },
-    //
-    //         { $project: { _id : 0, label: "$state", value: "$smallestCity.pop" } }
-    //     ],
-    //     {}
-    // );
+
+    var context = cubism.context()
+        .step(1e4)
+        .size(1440);
+    var horizon = context.horizon();
+    horizon.extent([-10, 10]);
+
+    var selector = "#charts div#lineDemo-2";
+    d3.select(selector)
+        .selectAll(".axis")
+        .data(["top", "bottom"])
+      .enter().append("div")
+        .attr("class", function(d) { return d + " axis"; })
+        .each(function(d) { d3.select(this).call(context.axis().ticks(12).orient(d)); });
+
+    d3.select(selector).append("div")
+        .attr("class", "rule")
+        .call(context.rule());
+
+    d3.select(selector).selectAll(".horizon")
+        .data(d3.range(1, 50).map(random))
+      .enter().insert("div", ".bottom")
+        .attr("class", "horizon")
+        .call(horizon);
+
+    context.on("focus", function(i) {
+      d3.selectAll(".value").style("right", i == null ? null : context.size() - i + "px");
+    });
+
+    // Replace this with context.graphite and graphite.metric!
+    function random(x) {
+      var value = 0,
+          values = [],
+          i = 0,
+          last;
+      return context.metric(function(start, stop, step, callback) {
+        start = +start, stop = +stop;
+        if (isNaN(last)) last = start;
+        while (last < stop) {
+          last += step;
+          value = Math.max(-10, Math.min(10, value + .8 * Math.random() - .4 + .2 * Math.cos(i += x * .02)));
+          values.push(value);
+        }
+        callback(null, values = values.slice((start - stop) / step));
+      }, x);
+    }
 
 });
-
-//Each bar represents a single discrete quantity.
-function exampleData() {
- return  [
-    {
-      key: "Cumulative Return",
-      values: [
-        {
-          "label" : "A Label" ,
-          "value" : -29.765957771107
-        } ,
-        {
-          "label" : "B Label" ,
-          "value" : 0
-        } ,
-        {
-          "label" : "C Label" ,
-          "value" : 32.807804682612
-        } ,
-        {
-          "label" : "D Label" ,
-          "value" : 196.45946739256
-        } ,
-        {
-          "label" : "E Label" ,
-          "value" : 0.19434030906893
-        } ,
-        {
-          "label" : "F Label" ,
-          "value" : -98.079782601442
-        } ,
-        {
-          "label" : "G Label" ,
-          "value" : -13.925743130903
-        } ,
-        {
-          "label" : "H Label" ,
-          "value" : -5.1387322875705
-        }
-      ]
-    }
-  ]
-
-}

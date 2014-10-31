@@ -21,6 +21,9 @@
 
     <!-- Styles -->
     <style>
+        @import url(style.css);
+    </style>
+    <style>
         #charts {
             height: 100%;
             overflow: visible;
@@ -43,12 +46,9 @@
 
         <div id="charts" class="">
             <h3>Time Series - Line Chart Demo</h3>
-            <div class="row">
-                <svg id="discreteBarDemo-1" class="col-md-6"></svg>
-                <svg id="discreteBarDemo-2" class="col-md-6"></svg>
-            </div>
-
-
+            <svg id="lineDemo-1" class=""></svg>
+            <br/>
+            <div id="lineDemo-2" class=""></div>
         </div>
 
     </div>
@@ -61,6 +61,7 @@
     <!-- Custom JavaScripts -->
     <script src="d3/d3.min.js"></script>
     <script src="nvd3/nv.d3.min.js"></script>
+    <script src="cubism/cubism.v1.js"></script>
     <script src="main.js"></script>
 
   </body>
