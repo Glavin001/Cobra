@@ -7,6 +7,7 @@ var mongodb = require('mongodb');
 var nconf = require('nconf');
 var cors = require('cors');
 var path = require('path');
+var EJSON = require('mongodb-extended-json');
 
 // Configuration
 var configPath = path.resolve(__dirname, '../default_config.json');
@@ -86,7 +87,7 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
             var query = queryToJson(req.query);
             // Check if Body is available and has options
             var body = req.body;
-            console.log(query, body, req.query);
+            // console.log(query, body, req.query);
             if (Object.keys(body).length > 0) {
                 query = body;
             }
@@ -96,10 +97,17 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
                 }
                 else {
                     var respCallback = function(json) {
-                        return res.json(json);
+                        // Convert JSON object to MongoDB-Extended JSON
+                        var e = EJSON.stringify(json);
+                        var j = JSON.parse(e);
+                        return res.json(j);
                     };
                     //console.log(JSON.stringify(query));
-                    return callback && callback(collection, query, respCallback);
+                    // Convert query to MongoDB Extended JSON
+                    var j = JSON.stringify(query);
+                    var q = EJSON.parse(j);
+                    // console.log(j,q);
+                    return callback && callback(collection, q, respCallback);
                 }
             });
         }
@@ -127,6 +135,7 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
 
     // Aggregation Queries
     var aggregation = basic(function(collection, query, callback) {
+        console.log(JSON.stringify(query));
         var pipeline = query.pipeline || [];
         var options = query.options || {};
         collection.aggregate(pipeline, options, function(err, docs) {
@@ -186,9 +195,9 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
             // Add data point - $set
             updateQuery.$set['values.'+minute+'.'+second] = value;
             // Add to aggregation - $inc
-            updateQuery.$inc['values.count'] = 0;
+            updateQuery.$inc['values.count'] = 1;
             updateQuery.$inc['values.total'] = value;
-            updateQuery.$inc['values.'+minute+'.count'] = 0;
+            updateQuery.$inc['values.'+minute+'.count'] = 1;
             updateQuery.$inc['values.'+minute+'.total'] = value;
             // Options
             var options = {};

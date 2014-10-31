@@ -210,7 +210,9 @@ $(document).ready(function() {
                                 key: key,
                                 values: []
                             };
-                            result.push(c);
+                            if (result.length < 1) {
+                                result.push(c);
+                            }
                         }
                         var date = new Date(doc._id.date);
                         for (var m=0;m<=59;m++) {
@@ -234,14 +236,16 @@ $(document).ready(function() {
             }
         );
     }
-    setInterval(poll, 1000);
-
+    // setInterval(poll, 1000);
 
     var context = cubism.context()
-        .step(1e4)
+        .step(1e3)
+        .serverDelay(10)
+        .clientDelay(0)
         .size(1440);
     var horizon = context.horizon();
     horizon.extent([-10, 10]);
+    horizon.height(120);
 
     var selector = "#charts div#lineDemo-2";
     d3.select(selector)
@@ -256,7 +260,7 @@ $(document).ready(function() {
         .call(context.rule());
 
     d3.select(selector).selectAll(".horizon")
-        .data(d3.range(1, 50).map(random))
+        .data(d3.range(0, 10).map(getMetric))
       .enter().insert("div", ".bottom")
         .attr("class", "horizon")
         .call(horizon);
@@ -266,20 +270,92 @@ $(document).ready(function() {
     });
 
     // Replace this with context.graphite and graphite.metric!
-    function random(x) {
+    function getMetric(x) {
       var value = 0,
           values = [],
           i = 0,
           last;
       return context.metric(function(start, stop, step, callback) {
+        //  console.log(x, start, stop, step);
         start = +start, stop = +stop;
-        if (isNaN(last)) last = start;
-        while (last < stop) {
-          last += step;
-          value = Math.max(-10, Math.min(10, value + .8 * Math.random() - .4 + .2 * Math.cos(i += x * .02)));
-          values.push(value);
-        }
-        callback(null, values = values.slice((start - stop) / step));
+        var date = new Date(start);
+        // Remember the position in the hour
+        var second = date.getUTCSeconds();
+        var minute = date.getUTCMinutes();
+        var milliseconds = date.getUTCMilliseconds();
+        // Only show hours (no minutes / seconds / milliseconds)
+        date.setUTCMinutes(0);
+        date.setUTCSeconds(0);
+        date.setUTCMilliseconds(0);
+
+        var collection = "testData";
+        var pipeline = [
+            {
+                $match: {
+                    _id: {
+                        source: "plant",
+                        type: "sensor "+x,
+                        date: {
+                            $date: +date
+                        }
+                    }
+                }
+            }
+        ];
+        var options = {};
+        // console.log(pipeline);
+
+        aggregate(collection,
+            pipeline,
+            options,
+            function(results) {
+                //
+                // if (isNaN(last)) last = start;
+                // while (last < stop) {
+                //   last += step;
+                //   value = Math.max(-10, Math.min(10, value + .8 * Math.random() - .4 + .2 * Math.cos(i += x * .02)));
+                //   values.push(value);
+                // }
+                // values = values.slice((start - stop) / step);
+                // console.log('a', new Date(start), new Date(stop), (start - stop), step, (start - stop) / step, values.length);
+                // callback(null, values);
+
+                // console.log('results', results);
+                var doc = results[0];
+                if (!doc) {
+                    return callback(null, []);
+                }
+                var values = doc.values;
+                var data = [];
+                //
+                // for (var m=0;m<=59;m++) {
+                //     // Create space for seconds
+                //     for (var s=0;s<=59;s++) {
+                //         value = doc.values[m][s];
+                //         date.setUTCMinutes(m);
+                //         date.setUTCSeconds(s);
+                //         if (value) {
+                //             c.values.push({
+                //                 label: (date).getTime()/1000,
+                //                 value: value
+                //             })
+                //         }
+                //     }
+                // }
+
+                for (var t=start; t<stop; t+=step) {
+                    var d = new Date(t);
+                    var m = d.getUTCMinutes();
+                    var s = d.getUTCSeconds();
+                    var value = values[m][s];
+                    data.push(value);
+                }
+
+                console.log(new Date(start), new Date(stop), (start - stop), step, (start - stop) / step, data.length);
+
+                console.log(data);
+                return callback(null, data);
+        });
       }, x);
     }
 
