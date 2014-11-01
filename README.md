@@ -22,4 +22,4 @@ Then open up `http://localhost:8080/` in your web browser.
 
 Graphing 100 sensors at rate of 1 per second. Both inserting and reading to graph in real-time, from within web-app.
 
-![screenshot](https://cloud.githubusercontent.com/assets/1885333/4866669/0008b568-612e-11e4-9302-db7d75d9bd66.png)
+![screenshot](https://cloud.githubusercontent.com/assets/1885333/4873430/6a0489a8-6212-11e4-97df-ce9729998f5c.png)
