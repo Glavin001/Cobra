@@ -260,7 +260,7 @@ $(document).ready(function() {
         .call(context.rule());
 
     d3.select(selector).selectAll(".horizon")
-        .data(d3.range(0, 10).map(getMetric))
+        .data(d3.range(0, 100).map(getMetric))
       .enter().insert("div", ".bottom")
         .attr("class", "horizon")
         .call(horizon);

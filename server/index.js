@@ -135,7 +135,7 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
 
     // Aggregation Queries
     var aggregation = basic(function(collection, query, callback) {
-        console.log(JSON.stringify(query));
+        // console.log(JSON.stringify(query));
         var pipeline = query.pipeline || [];
         var options = query.options || {};
         collection.aggregate(pipeline, options, function(err, docs) {
@@ -154,7 +154,7 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
     });
 
     // New Data value
-    var createData = basic(function(collection, query, callback) {
+    var createData = function(collection, query, callback) {
         var source = query.source;
         var type = query.type;
         var date = new Date(query.date);
@@ -235,7 +235,7 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
         }
 
         update(_id, value, function(err, docs) {
-            console.log('update1', err, docs);
+            // console.log('update1', err, docs);
             // Check if successful
             if (docs > 0) {
                 // Successful
@@ -247,10 +247,10 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
                 // Did not find doc to update
                 // Must create the initial doc
                 create(_id, function(err, result) {
-                    console.log('create', err, result);
+                    // console.log('create', err, result);
                     // Retry update
                     update(_id, value, function(err, docs) {
-                        console.log('update2', err, docs);
+                        // console.log('update2', err, docs);
                         return callback({
                             'err': err,
                             'docs': docs
@@ -259,8 +259,50 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
                 });
             }
         });
+    };
+    var createDataEndpoint = basic(createData);
+    app.post('/api/v1/:collection/data', createDataEndpoint);
+
+    // Test multi-sensor writes
+    var sensorCount = 100;
+    var history = {};
+    var collectionName = "testData";
+    db.collection(collectionName, function(err, collection) {
+        if (err) {
+            console.log({'error': err.toString() });
+        }
+        setInterval(function() {
+            console.log(new Date() + " - Creating "+sensorCount+" fake sensors data in collection '"+collectionName+"'.");
+            var currDate = new Date();
+            var source = "plant";
+
+            for (var x=0; x<sensorCount; x++) {
+
+              // Get history
+              var h = history[x] || {};
+              var prevValue = h.prev || 0;
+              var i = h.i || 0;
+              var value = Math.max(-10, Math.min(10, prevValue + .8 * Math.random() - .4 + .2 * Math.cos(i += x * .02)));
+              // Store previous value
+              h.prev = value;
+              history[x] = h;
+              // Create document
+              var type = "sensor "+x;
+              var query = {
+                          source: source,
+                          type: type,
+                          date: currDate,
+                          value: value
+                      };
+              // Insert
+              // console.log(query);
+              createData(collection, query, function(result) {
+                // console.log(result);
+              });
+            }
+
+        }, 1000);
     });
-    app.post('/api/v1/:collection/data', createData);
 
     // Start server
     console.log('Starting server on port '+nconf.get('server:port'));
