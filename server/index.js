@@ -191,7 +191,7 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
 
         function update(id, value, updateCallback) {
             var findQuery = { _id: _id };
-            var updateQuery = { $set: {}, $inc: {} };
+            var updateQuery = { $setOnInsert: {}, $set: {}, $inc: {} };
             // Add data point - $set
             updateQuery.$set['values.'+minute+'.'+second] = value;
             // Add to aggregation - $inc
@@ -199,65 +199,45 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
             updateQuery.$inc['values.total'] = value;
             updateQuery.$inc['values.'+minute+'.count'] = 1;
             updateQuery.$inc['values.'+minute+'.total'] = value;
+
+            // Run Update query
+            var doc = updateQuery.$setOnInsert;
+            // doc.values = {
+            //     'count': 0,
+            //     'total': 0
+            // };
+            var defaultValue = null; // 0.0;
+            // Create space for minutes
+            for (var m=0;m<=59;m++) {
+                // doc.values[m] = {};
+                if (m != minute) {
+                    doc["values."+m+".count"] = 0;
+                    doc["values."+m+".total"] = 0;
+                }
+                // Create space for seconds
+                for (var s=0;s<=59;s++) {
+                    if (!(m === minute && s === second)) {
+                        doc["values."+m+"."+s] = defaultValue;
+                    }
+                }
+            }
+
             // Options
-            var options = {};
+            var options = {upsert: true};
+            // console.log(JSON.stringify(updateQuery, null, 4));
             // Run Update query
             collection.update(findQuery, updateQuery, options, function(err, docs) {
                 return updateCallback(err, docs);
             });
-        }
 
-        function create(id, createCallback) {
-            // Run Update query
-            var doc = {
-                _id: id
-            };
-            doc.values = {
-                'count': 0,
-                'total': 0
-            };
-            var defaultValue = null; // 0.0;
-            // Create space for minutes
-            for (var m=0;m<=59;m++) {
-                doc.values[m] = {
-                    'count': 0,
-                    'total': 0
-                };
-                // Create space for seconds
-                for (var s=0;s<=59;s++) {
-                    doc.values[m][s] = defaultValue;
-                }
-            }
-            var options = {};
-            collection.insert(doc, options, function(err, docs) {
-                return createCallback(err, docs);
-            });
         }
 
         update(_id, value, function(err, docs) {
-            // console.log('update1', err, docs);
-            // Check if successful
-            if (docs > 0) {
-                // Successful
-                return callback({
-                    'err': err,
-                    'docs': docs
-                });
-            } else {
-                // Did not find doc to update
-                // Must create the initial doc
-                create(_id, function(err, result) {
-                    // console.log('create', err, result);
-                    // Retry update
-                    update(_id, value, function(err, docs) {
-                        // console.log('update2', err, docs);
-                        return callback({
-                            'err': err,
-                            'docs': docs
-                        });
-                    });
-                });
-            }
+            console.log('update1', err, docs);
+            return callback({
+                'err': err,
+                'docs': docs
+            });
         });
     };
     var createDataEndpoint = basic(createData);
