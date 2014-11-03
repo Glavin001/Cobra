@@ -191,14 +191,20 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
 
         function update(id, value, updateCallback) {
             var findQuery = { _id: _id };
-            var updateQuery = { $set: {}, $inc: {} };
+            var updateQuery = { $set: {}, $inc: {}, $max: {}, $min: {} };
             // Add data point - $set
             updateQuery.$set['values.'+minute+'.'+second] = value;
-            // Add to aggregation - $inc
-            updateQuery.$inc['values.count'] = 1;
-            updateQuery.$inc['values.total'] = value;
-            updateQuery.$inc['values.'+minute+'.count'] = 1;
-            updateQuery.$inc['values.'+minute+'.total'] = value;
+            // Add to aggregation - $inc & $max & $min
+            updateQuery.$inc['count'] = 1;
+            updateQuery.$inc['total'] = value;
+            updateQuery.$inc['stats.'+minute+'.0'] = 1;
+            updateQuery.$inc['stats.'+minute+'.1'] = value;
+
+            updateQuery.$max['max'] = value;
+            updateQuery.$min['min'] = value;
+            updateQuery.$max['stats.'+minute+'.2'] = value;
+            updateQuery.$min['stats.'+minute+'.3'] = value;
+
             // Options
             var options = {};
             // Run Update query
@@ -212,20 +218,22 @@ MongoClient.connect("mongodb://"+nconf.get('mongo:host')+":"+nconf.get('mongo:po
             var doc = {
                 _id: id
             };
-            doc.values = {
-                'count': 0,
-                'total': 0
-            };
+            doc.count = 0;
+            doc.total = 0;
+            doc.max = null;
+            // doc.min = null;
+            doc.values = [];
+            doc.stats = [];
+
             var defaultValue = null; // 0.0;
             // Create space for minutes
             for (var m=0;m<=59;m++) {
-                doc.values[m] = {
-                    'count': 0,
-                    'total': 0
-                };
+                doc.stats[m] = [0,0, null]; // [count, total, max, min]
+                doc.values.push([]);
                 // Create space for seconds
                 for (var s=0;s<=59;s++) {
-                    doc.values[m][s] = defaultValue;
+                    // doc.values[m][s] = defaultValue;
+                    doc.values[m].push(defaultValue);
                 }
             }
             var options = {};

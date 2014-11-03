@@ -238,6 +238,7 @@ $(document).ready(function() {
     }
     // setInterval(poll, 1000);
 
+    var numOfSensors = 100;
     var context = cubism.context()
         .step(1e3)
         .serverDelay(10)
@@ -260,7 +261,7 @@ $(document).ready(function() {
         .call(context.rule());
 
     d3.select(selector).selectAll(".horizon")
-        .data(d3.range(0, 100).map(getMetric))
+        .data(d3.range(0, numOfSensors).map(getMetric))
       .enter().insert("div", ".bottom")
         .attr("class", "horizon")
         .call(horizon);
